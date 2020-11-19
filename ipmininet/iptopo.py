@@ -1,5 +1,8 @@
 """This module defines topology class that supports adding L3 routers"""
 import itertools
+import re
+import math
+import random
 from typing import Union, Type, Dict, List, Tuple, Any
 
 from mininet.topo import Topo
@@ -115,6 +118,15 @@ class IPTopo(Topo):
             opts = self.lopts
         port1, port2 = self.addPort(node1, node2, port1, port2)
         opts = dict(opts)
+        
+        
+        ## This code is supposed to set the IGP cost of the link according to the bandwidth.
+        ## However, a cost superior or equal to 4 seems to cause an infinite loop...
+
+        # If no cost provided but bandwidth and delay are given, compute the cost
+        #if(not ("igp_metric" in opts) and ("bw" in opts)):
+        #    opts["igp_metric"] = math.ceil(500.0 / opts['bw']) # The cost will be at least 1
+
         opts.update(node1=node1, node2=node2, port1=port1, port2=port2)
         key = self.g.add_edge(node1, node2, key, opts)
 
